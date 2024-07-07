@@ -53,24 +53,33 @@ const idealCurves = {
     }
 };
 
-async function getCardImage(cardName) {
+async function getCardData(cardName) {
     const response = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
-    const cardData = await response.json();
-    return cardData.image_uris ? cardData.image_uris.normal : null;
+    if (!response.ok) {
+        console.error(`Error fetching card data for ${cardName}`);
+        return null;
+    }
+    return await response.json();
 }
 
-function analyzeDeckCurve(deckList, commanderCmc) {
+async function analyzeDeckCurve(deckList, commanderCmc) {
     const curve = {};
     const idealCurve = idealCurves[commanderCmc];
 
-    deckList.forEach(card => {
-        const cmc = card.cmc; // Converted mana cost
+    const cardDetails = await Promise.all(deckList.map(async (cardLine) => {
+        const [count, ...cardNameArr] = cardLine.split(' ');
+        const cardName = cardNameArr.join(' ');
+        const cardData = await getCardData(cardName);
+        if (!cardData) return null;
+        const cmc = cardData.cmc;
 
         if (!curve[cmc]) {
             curve[cmc] = 0;
         }
-        curve[cmc]++;
-    });
+        curve[cmc] += parseInt(count);
+
+        return { count: parseInt(count), cardName, image: cardData.image_uris ? cardData.image_uris.normal : '', cmc };
+    }));
 
     const analysis = {};
     for (let cmc in idealCurve) {
@@ -78,25 +87,14 @@ function analyzeDeckCurve(deckList, commanderCmc) {
         analysis[cmc] = (curve[cmc] || 0) - idealCurve[cmc];
     }
 
-    return { analysis, idealCurve };
+    return { cardDetails: cardDetails.filter(c => c !== null), analysis, idealCurve };
 }
 
 document.getElementById('deck-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const deckList = document.getElementById('deck-list').value.split('\n').map(line => line.trim()).filter(line => line);
     const commanderCmc = parseInt(document.getElementById('commander-cmc').value);
-    const cardDetails = await Promise.all(deckList.map(async cardLine => {
-        const [count, ...cardNameArr] = cardLine.split(' ');
-        const cardName = cardNameArr.join(' ');
-        const image = await getCardImage(cardName);
-        // Fetch card details from Scryfall to get the CMC
-        const response = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
-        const cardData = await response.json();
-        return { count: parseInt(count), cardName, image, cmc: cardData.cmc };
-    }));
-
-    const { analysis, idealCurve } = analyzeDeckCurve(cardDetails, commanderCmc);
-    
+    const { cardDetails, analysis, idealCurve } = await analyzeDeckCurve(deckList, commanderCmc);
     displayResults(cardDetails, analysis, idealCurve);
 });
 
