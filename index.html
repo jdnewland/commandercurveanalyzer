@@ -7,10 +7,17 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        #app {
+            flex: 1;
         }
         #results {
             display: flex;
             flex-wrap: wrap;
+            margin-top: 20px;
         }
         .card {
             margin: 10px;
@@ -18,6 +25,22 @@
         }
         .analysis, .grade, .ideal {
             margin-top: 20px;
+        }
+        .curve-table {
+            margin-left: 20px;
+            border-collapse: collapse;
+            width: 300px;
+        }
+        .curve-table th, .curve-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .curve-table th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        .curve-table td {
+            text-align: center;
         }
     </style>
 </head>
@@ -36,6 +59,81 @@
         <div id="results">
             <!-- Results will be displayed here -->
         </div>
+    </div>
+    <div id="curve-table-container">
+        <h3>Ideal Curves by Commander CMC</h3>
+        <table class="curve-table">
+            <thead>
+                <tr>
+                    <th>Commander</th>
+                    <th>1-drops</th>
+                    <th>2-drops</th>
+                    <th>3-drops</th>
+                    <th>4-drops</th>
+                    <th>5-drops</th>
+                    <th>6-drops</th>
+                    <th>Mana rocks</th>
+                    <th>Lands</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2 mana</td>
+                    <td>9</td>
+                    <td>0</td>
+                    <td>20</td>
+                    <td>14</td>
+                    <td>9</td>
+                    <td>4</td>
+                    <td>Sol Ring + 0 Signet</td>
+                    <td>42</td>
+                </tr>
+                <tr>
+                    <td>3 mana</td>
+                    <td>8</td>
+                    <td>19</td>
+                    <td>0</td>
+                    <td>16</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>Sol Ring + 0 Signet</td>
+                    <td>42</td>
+                </tr>
+                <tr>
+                    <td>4 mana</td>
+                    <td>6</td>
+                    <td>12</td>
+                    <td>13</td>
+                    <td>0</td>
+                    <td>13</td>
+                    <td>8</td>
+                    <td>Sol Ring + 7 Signet</td>
+                    <td>39</td>
+                </tr>
+                <tr>
+                    <td>5 mana</td>
+                    <td>6</td>
+                    <td>12</td>
+                    <td>10</td>
+                    <td>13</td>
+                    <td>0</td>
+                    <td>10</td>
+                    <td>Sol Ring + 8 Signet</td>
+                    <td>39</td>
+                </tr>
+                <tr>
+                    <td>6 mana</td>
+                    <td>6</td>
+                    <td>12</td>
+                    <td>10</td>
+                    <td>14</td>
+                    <td>9</td>
+                    <td>0</td>
+                    <td>Sol Ring + 9 Signet</td>
+                    <td>38</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <script src="script.js"></script>
 </body>
