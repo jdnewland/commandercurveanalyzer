@@ -1,5 +1,4 @@
-// script.js
-
+javascript
 const idealCurves = {
     2: {
         '1': 9,
@@ -78,7 +77,7 @@ async function analyzeDeckCurve(deckList, commanderCmc) {
         }
         curve[cmc] += parseInt(count);
 
-        return { count: parseInt(count), cardName, image: cardData.image_uris ? cardData.image_uris.normal : '', cmc };
+        return { count: parseInt(count), cardName, cmc };
     }));
 
     const analysis = {};
@@ -129,15 +128,19 @@ function displayResults(cardDetails, analysis, idealCurve, grade) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
+    const table = document.createElement('table');
+    const headerRow = table.insertRow();
+    headerRow.innerHTML = `<th>Count</th><th>Card Name</th><th>CMC</th>`;
+    
     cardDetails.forEach(card => {
-        const cardDiv = document.createElement('div');
-        cardDiv.classList.add('card');
-        cardDiv.innerHTML = `
-            <img src="${card.image}" alt="${card.cardName}">
-            <p>${card.count}x ${card.cardName}</p>
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td>${card.count}</td>
+            <td>${card.cardName}</td>
+            <td>${card.cmc}</td>
         `;
-        resultsDiv.appendChild(cardDiv);
     });
+    resultsDiv.appendChild(table);
 
     const analysisDiv = document.createElement('div');
     analysisDiv.classList.add('analysis');
