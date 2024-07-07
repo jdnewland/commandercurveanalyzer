@@ -90,12 +90,29 @@ async function analyzeDeckCurve(deckList, commanderCmc) {
     return { cardDetails: cardDetails.filter(c => c !== null), analysis, idealCurve };
 }
 
+function calculateGrade(analysis) {
+    let totalDifference = 0;
+    for (let cmc in analysis) {
+        totalDifference += Math.abs(analysis[cmc]);
+    }
+    const maxDifference = Object.keys(analysis).length * 10; // Example calculation
+    const score = (1 - (totalDifference / maxDifference)) * 100;
+    let grade = '';
+    if (score >= 90) grade = 'A';
+    else if (score >= 80) grade = 'B';
+    else if (score >= 70) grade = 'C';
+    else if (score >= 60) grade = 'D';
+    else grade = 'F';
+    return grade;
+}
+
 document.getElementById('deck-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const deckList = document.getElementById('deck-list').value.split('\n').map(line => line.trim()).filter(line => line);
     const commanderCmc = parseInt(document.getElementById('commander-cmc').value);
     const { cardDetails, analysis, idealCurve } = await analyzeDeckCurve(deckList, commanderCmc);
-    displayResults(cardDetails, analysis, idealCurve);
+    const grade = calculateGrade(analysis);
+    displayResults(cardDetails, analysis, idealCurve, grade);
 });
 
 document.getElementById('archidekt-form').addEventListener('submit', async function(e) {
@@ -108,7 +125,7 @@ document.getElementById('archidekt-form').addEventListener('submit', async funct
     document.getElementById('deck-list').value = deckList.join('\n');
 });
 
-function displayResults(cardDetails, analysis, idealCurve) {
+function displayResults(cardDetails, analysis, idealCurve, grade) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
@@ -126,9 +143,15 @@ function displayResults(cardDetails, analysis, idealCurve) {
     analysisDiv.classList.add('analysis');
     for (let cmc in analysis) {
         const diff = analysis[cmc];
-        analysisDiv.innerHTML += `<p>CMC ${cmc}: ${diff >= 0 ? '+' : ''}${diff}</p>`;
+        analysisDiv.innerHTML += `<p>CMC ${cmc}: ${diff >= 0 ? '+' : ''}${diff} (Ideal: ${idealCurve[cmc]}, Missing/Excess: ${Math.abs(diff)})</p>`;
     }
+    analysisDiv.innerHTML += `<p>Lands: ${idealCurve['Lands']}</p>`;
     resultsDiv.appendChild(analysisDiv);
+
+    const gradeDiv = document.createElement('div');
+    gradeDiv.classList.add('grade');
+    gradeDiv.innerHTML = `<h3>Deck Grade: ${grade}</h3>`;
+    resultsDiv.appendChild(gradeDiv);
 
     const idealDiv = document.createElement('div');
     idealDiv.classList.add('ideal');
