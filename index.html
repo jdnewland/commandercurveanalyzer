@@ -1,22 +1,38 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MTG Commander Deck Analysis</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div id="app">
-            <h1>MTG Commander Deck Analysis</h1>
-            <div>
-                <input type="file" id="deckFile" name="deckFile">
-                <button onclick="analyzeDeck()">Analyze Deck</button>
-            </div>
-            <div id="result">
-                <!-- Analysis results will be displayed here -->
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commander Deck Curve Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #results {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .card {
+            margin: 10px;
+            text-align: center;
+        }
+        .analysis {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Commander Deck Curve Analyzer</h1>
+        <form id="deck-form">
+            <textarea id="deck-list" placeholder="Paste your deck list here" rows="10" cols="50"></textarea>
+            <input type="number" id="commander-cmc" placeholder="Commander CMC" required>
+            <button type="submit">Analyze</button>
+        </form>
+        <div id="results">
+            <!-- Results will be displayed here -->
         </div>
-        <script src="script.js"></script>
-    </body>
-    </html>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
