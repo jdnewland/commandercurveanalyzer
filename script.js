@@ -100,6 +100,16 @@ document.getElementById('deck-form').addEventListener('submit', async function(e
     displayResults(cardDetails, analysis, idealCurve);
 });
 
+document.getElementById('archidekt-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const archidektUrl = document.getElementById('archidekt-url').value;
+    const deckId = archidektUrl.split('/').pop();
+    const response = await fetch(`https://archidekt.com/api/decks/${deckId}/`);
+    const data = await response.json();
+    const deckList = data.cards.map(card => `${card.quantity} ${card.card.oracleCard.name}`);
+    document.getElementById('deck-list').value = deckList.join('\n');
+});
+
 function displayResults(cardDetails, analysis, idealCurve) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
